@@ -4,8 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'icon_content.dart';
 import 'reusable_card.dart';
 import 'constants.dart';
-enum Gender { male, female }
+import 'results_page.dart';
 
+enum Gender { male, female }
 
 class InputPage extends StatefulWidget {
   const InputPage({super.key});
@@ -17,6 +18,9 @@ class InputPage extends StatefulWidget {
 class _InputPageState extends State<InputPage> {
   Color maleCardColor = inactiveCardColor;
   Color femaleCardColor = inactiveCardColor;
+  int height = 180;
+  int weight = 60;
+  int age = 20;
 
   Gender? selectedGender;
 
@@ -38,7 +42,8 @@ class _InputPageState extends State<InputPage> {
         ),
       ),
       body: Center(
-        child: Column( crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
               child: Row(
@@ -62,11 +67,12 @@ class _InputPageState extends State<InputPage> {
                     ),
                   ),
                   Expanded(
-                    child: ReusableCard(onPress: () {
-                      setState(() {selectedGender = Gender.female;
-                        
-                      });
-                    },
+                    child: ReusableCard(
+                      onPress: () {
+                        setState(() {
+                          selectedGender = Gender.female;
+                        });
+                      },
                       colour: selectedGender == Gender.female
                           ? activeColor
                           : inactiveCardColor,
@@ -80,27 +86,54 @@ class _InputPageState extends State<InputPage> {
               ),
             ),
             Expanded(
-              child: ReusableCard(onPress: () {
-                
-              },
+              child: ReusableCard(
+                onPress: () {},
                 colour: inactiveCardColor,
-                cardChild: Column(mainAxisAlignment: MainAxisAlignment.center,
+                cardChild: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconContent(label: 'HEIGHT'), Row(
+                    Text("HEIGHT", style: labelTextStyle),
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       textBaseline: TextBaseline.alphabetic,
-                      children: const [
-                        Text(
-                          '180',
-                          style: numberTextStyle,
-                        ),
-                        Text(
+                      children: [
+                        Text(height.toString(), style: numberTextStyle),
+                        const Text(
                           'cm',
-                          style: TextStyle(fontSize: 18, color: Color(0xFF8D8E98)),
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xFF8D8E98),
+                          ),
                         ),
                       ],
-                    )
+                    ),
+                    SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        thumbShape: const RoundSliderThumbShape(
+                          enabledThumbRadius: 15,
+                        ),
+                        overlayShape: const RoundSliderOverlayShape(
+                          overlayRadius: 30,
+                        ),
+                        thumbColor: const Color(0xffEB1555),
+                        activeTrackColor: Colors.white,
+                        inactiveTrackColor: const Color(0xFF8D8E98),
+                        overlayColor: const Color(0x29EB1555),
+                      ),
+                      child: Slider(
+                        value: height.toDouble(),
+                        min: 120,
+                        max: 220,
+
+                        // activeColor: const Color(0xffEB1555),
+                        onChanged: (double newValue) {
+                          setState(() {
+                            height = newValue.round();
+                          });
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -108,21 +141,73 @@ class _InputPageState extends State<InputPage> {
             Expanded(
               child: Row(
                 children: [
-                  Expanded(child: ReusableCard(onPress: () {
-                
-              },colour: inactiveCardColor)),
+                  Expanded(
+                    child: ReusableCard(
+                      onPress: () {},
+                      colour: inactiveCardColor, cardChild: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("WEIGHT", style: labelTextStyle),
+                          Text(weight.toString(), style: numberTextStyle),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              RoundIconButton(icon: Icons.add, onPressed: () { setState(() { weight++; }); }),
+                              const SizedBox(width: 10),
+                              RoundIconButton(icon: Icons.remove, onPressed: () { setState(() { weight--; }); }),
+                            ],
+                          ),
+                        ],
+                    ),
+                  ),),
                   // ignore: prefer_const_constructors
-                  Expanded(child: ReusableCard(onPress: () {
-                
-              },colour: inactiveCardColor)),
+                  Expanded(
+                    child: ReusableCard(
+                      cardChild: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("AGE", style: labelTextStyle),
+                          Text(age.toString(), style: numberTextStyle),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              RoundIconButton(icon: FontAwesomeIcons.plus, onPressed: () { setState(() { age++; }); }),
+                              const SizedBox(width: 10),
+                              RoundIconButton(icon: FontAwesomeIcons.minus, onPressed: () { setState(() { age--; }); }),
+                            ],
+                          ),
+                        ],
+                      ),
+                      onPress: () {},
+                      colour: inactiveCardColor,
+                    ),
+                  ),
                 ],
               ),
             ),
-            Container(
-              color: const Color(0xffEB1555),
-              width: bottomContainerWidth,
-              height: 80,
-              margin: const EdgeInsets.only(top: 10),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ResultsPage()),
+                );
+              },
+              child: Container(
+                color: const Color(0xffEB1555),
+                width: bottomContainerWidth,
+                height: 80,
+                margin: const EdgeInsets.only(top: 10),
+                child: const Center(
+                  child: Text(
+                    'CALCULATE',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -131,6 +216,26 @@ class _InputPageState extends State<InputPage> {
         onPressed: () {},
         child: const Icon(Icons.add),
       ),
+    );
+  }
+}
+
+
+
+class RoundIconButton extends StatelessWidget {
+  const RoundIconButton({super.key, required this.icon, required this.onPressed});
+
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return RawMaterialButton(
+      shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      fillColor: Theme.of(context).colorScheme.primaryContainer,
+      constraints: const BoxConstraints.tightFor(width: 40, height: 48),
+      onPressed: onPressed,
+      child: Icon(icon, color: Theme.of(context).colorScheme.onPrimaryContainer),
     );
   }
 }
